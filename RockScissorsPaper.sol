@@ -1,12 +1,16 @@
 pragma solidity ^0.8.0;
 
 contract RockScissorsPaper {
-    
     address owner;
-    enum Move { None, Rock, Paper, Scissors }
+    enum Move { None, Rock, Scissors, Paper }
     enum GameStatus { Draw, Lose, Win }
 
-    event GameResult(address player, uint256 betAmount, GameStatus status);
+    event GameResult(address player, uint256 betAmount, Move playerMove, Move botMove, GameStatus status);
+
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
 
     constructor() payable {
         owner = msg.sender;
@@ -23,15 +27,21 @@ contract RockScissorsPaper {
         if (playerMove == botMove) {
             // return funds
             payable(msg.sender).transfer(msg.value);
-            emit GameResult(msg.sender, msg.value, GameStatus.Draw);
+            emit GameResult(msg.sender, msg.value, playerMove, botMove, GameStatus.Draw);
         } else if (
                 playerMove == Move.Scissors && botMove == Move.Paper ||
                 playerMove == Move.Paper && botMove == Move.Rock ||
                 playerMove == Move.Rock && botMove == Move.Scissors) {
+            // user won - transfer him double bet
             payable(msg.sender).transfer(msg.value * 2);
-            emit GameResult(msg.sender, msg.value, GameStatus.Win);
+            emit GameResult(msg.sender, msg.value, playerMove, botMove, GameStatus.Win);
         } else {
-            emit GameResult(msg.sender, msg.value, GameStatus.Lose);
+            // user lost - just emit event
+            emit GameResult(msg.sender, msg.value, playerMove, botMove, GameStatus.Lose);
         }
+    }
+
+    function withdraw() public onlyOwner {
+        payable(msg.sender).transfer(address(this).balance);
     }
 }

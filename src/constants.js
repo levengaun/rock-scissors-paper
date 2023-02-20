@@ -1,6 +1,6 @@
 import Web3 from "web3"
 
-export const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/")
+// export const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/")
 export const abi = JSON.parse(`[
 	{
 		"inputs": [],
@@ -24,6 +24,18 @@ export const abi = JSON.parse(`[
 			},
 			{
 				"indexed": false,
+				"internalType": "enum RockScissorsPaper.Move",
+				"name": "playerMove",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum RockScissorsPaper.Move",
+				"name": "botMove",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
 				"internalType": "enum RockScissorsPaper.GameStatus",
 				"name": "status",
 				"type": "uint8"
@@ -44,8 +56,17 @@ export const abi = JSON.parse(`[
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ]`)
 
-export const contractAddress =  "0x1069DEB50E98cA639D32965DB7a0Aa4553247a3e"
-export const contract = new web3.eth.Contract(abi, contractAddress)
+export const contractAddress =  "0x949A362a1C4c7Ea117991A520Ca8422a23cc63E1"
+
+export const moves = ["None", "Rock", "Scissors", "Paper"]
+export const statuses = ["Draw", "Lose", "Win"]
