@@ -37,25 +37,31 @@ export default function RockScissorsPaper() {
         let games = await contract.getPastEvents("GameResult", {
             fromBlock: blockNumber-5000, toBlock: blockNumber
         })
+
         setLatestGames(games.reverse().slice(0, 10))
     }
 
-    const fetchGames = async () => {
-        const blockNumber = await web3.eth.getBlockNumber()
-        let games = await contract.getPastEvents("GameResult", {
-            fromBlock: blockNumber-5000, toBlock: blockNumber
-        })
+    const fetchGames = async (hash) => {
+        while (true) {
+            setTimeout(() => {}, 2500)
+            const blockNumber = await web3.eth.getBlockNumber()
+            let games = await contract.getPastEvents("GameResult", {
+                fromBlock: blockNumber-5000, toBlock: blockNumber
+            })
 
-        let lastGame = games[games.length-1]
-        let values = lastGame["returnValues"]
+            let _games = games.filter(game => game.transactionHash == hash)
+            if (_games.length == 0) continue 
 
-        setStatus(`Bot choose ${moves[values["botMove"]]}. Result: ${statuses[values["status"]]}`)
+            let lastGame = _games[0]
+            let values = lastGame["returnValues"]
 
-        setLatestGames(games.reverse().slice(0, 10))
+            setStatus(`Bot choose ${moves[values["botMove"]]}. Result: ${statuses[values["status"]]}`)
+            setLatestGames(games.reverse().slice(0, 10))
+            break
+        }
     }
 
     useEffect(() => {
-        // if (account) return
         connectWallet()
     }, [])
 
@@ -69,7 +75,6 @@ export default function RockScissorsPaper() {
         }
 
         setStatus("")
-        setLoading(true)
 
         const tx = contract.methods.play(option)
         const signature = await ethereum.request({
@@ -85,10 +90,7 @@ export default function RockScissorsPaper() {
 
         console.log("signature:", signature)
 
-        setTimeout(async () => {
-            await fetchGames()
-            setLoading(false)
-        }, 10000)
+        await fetchGames(signature)
     }
 
     return (
@@ -133,7 +135,7 @@ export default function RockScissorsPaper() {
                     <button onClick={() => handlePlay(3)} className="m-5 p-2 px-3 bg-yellow-500 rounded-lg text-white font-bold">Paper</button>
                 </div>
 
-                {loading && <h2 className="text-center text-xl font-bold">Loading...</h2>}
+                {status == "" && <h2 className="text-center text-xl font-bold">Loading...</h2>}
 
                 {status
                 ? <h2 className="text-xl font-bold">{status}</h2>
