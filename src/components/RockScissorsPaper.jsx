@@ -23,7 +23,7 @@ export default function RockScissorsPaper() {
         
         web3.setProvider(ethereum)
 
-        let accounts = await web3.eth.getAccounts()
+        let accounts = await ethereum.request({ method: 'eth_requestAccounts' })
         let _account = web3.utils.toChecksumAddress(accounts[0])
         setAccount(_account)
 
