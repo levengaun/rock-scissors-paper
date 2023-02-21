@@ -1,7 +1,9 @@
 # rock-scissors-paper
 Rock Scissors Paper dApp
 
-[Contract: 0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4](https://testnet.bscscan.com/address/0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4)
+Demo: https://levengaun.vercel.app
+
+Contract [0x2fbc9a31e022e9cbba5f99c1a69d2226269ab522](https://testnet.bscscan.com/address/0x2fbc9a31e022e9cbba5f99c1a69d2226269ab522)
 
 ## Screenshots
 Simple UI for interacting with smart contract.

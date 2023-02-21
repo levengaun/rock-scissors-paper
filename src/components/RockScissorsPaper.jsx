@@ -10,12 +10,12 @@ export default function RockScissorsPaper() {
     const [value, setValue] = useState(0.001)
     const [latestGames, setLatestGames] = useState([])
     const [web3, _] = useState(new Web3())
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [status, setStatus] = useState(null)
 
     const ethereum = window.ethereum
 
     const connectWallet = async () => {
-        setLoading(true)
         if (!ethereum) {
             console.log("Install MetaMask")
             return
@@ -38,7 +38,6 @@ export default function RockScissorsPaper() {
             fromBlock: blockNumber-5000, toBlock: blockNumber
         })
         setLatestGames(games.reverse().slice(0, 10))
-        setLoading(false)
     }
 
     const fetchGames = async () => {
@@ -46,10 +45,17 @@ export default function RockScissorsPaper() {
         let games = await contract.getPastEvents("GameResult", {
             fromBlock: blockNumber-5000, toBlock: blockNumber
         })
+
+        let lastGame = games[games.length-1]
+        let values = lastGame["returnValues"]
+
+        setStatus(`Bot choose ${moves[values["botMove"]]}. Result: ${statuses[values["status"]]}`)
+
         setLatestGames(games.reverse().slice(0, 10))
     }
 
     useEffect(() => {
+        // if (account) return
         connectWallet()
     }, [])
 
@@ -61,6 +67,9 @@ export default function RockScissorsPaper() {
         if (!account) {
             connectWallet()
         }
+
+        setStatus("")
+        setLoading(true)
         
         const tx = contract.methods.play(option)
         const signature = await ethereum.request({
@@ -68,7 +77,7 @@ export default function RockScissorsPaper() {
             params: [{
                 to: contractAddress,
                 from: account,
-                gas: "0xa710",
+                gas: web3.utils.numberToHex(1e5*5),
                 value: web3.utils.numberToHex(value*1e18),
                 data: tx.encodeABI()
             }]
@@ -76,7 +85,10 @@ export default function RockScissorsPaper() {
 
         console.log("signature:", signature)
 
-        setTimeout(async () => await fetchGames(), 5000)
+        setTimeout(async () => {
+            await fetchGames()
+            setLoading(false)
+        }, 5000)
     }
 
     return (
@@ -121,6 +133,12 @@ export default function RockScissorsPaper() {
                     <button onClick={() => handlePlay(3)} className="m-5 p-2 px-3 bg-yellow-500 rounded-lg text-white font-bold">Paper</button>
                 </div>
 
+                {loading && <h2 className="text-center text-xl font-bold">Loading...</h2>}
+
+                {status
+                ? <h2 className="text-xl font-bold">{status}</h2>
+                : ""}
+
                 <h2 className="my-5 font-bold text-xl">Latest games</h2>
                 <div className="p-5 bg-slate-200/50 rounded-lg">
                     
@@ -132,9 +150,7 @@ export default function RockScissorsPaper() {
                         <h2 className="">Status</h2>
                     </div>
 
-                    {loading 
-                    ? <h2 className="text-center text-xl font-bold">Loading...</h2> 
-                    : latestGames.map(game => {
+                    {latestGames.length != 0 && latestGames.map(game => {
                         const values = game.returnValues
                         return (
                             <div className="my-2 grid grid-cols-5 gap-4" onClick={() => window.open("https://testnet.bscscan.com/tx/"+game.transactionHash)} key={game.transactionHash}>
