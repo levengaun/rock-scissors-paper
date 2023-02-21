@@ -1,4 +1,6 @@
+import Web3 from "web3"
 
+const web3 = new Web3()
 
 export const abi = JSON.parse(`[
 	{
@@ -65,7 +67,7 @@ export const abi = JSON.parse(`[
 	}
 ]`)
 
-export const contractAddress =  "0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4"
+export const contractAddress =  web3.utils.toChecksumAddress("0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4")
 
 export const moves = ["None", "Rock", "Scissors", "Paper"]
 export const statuses = ["Draw", "Lose", "Win"]
