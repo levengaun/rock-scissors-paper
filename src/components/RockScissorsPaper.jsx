@@ -70,7 +70,7 @@ export default function RockScissorsPaper() {
 
         setStatus("")
         setLoading(true)
-        
+
         const tx = contract.methods.play(option)
         const signature = await ethereum.request({
             method: "eth_sendTransaction",
@@ -88,7 +88,7 @@ export default function RockScissorsPaper() {
         setTimeout(async () => {
             await fetchGames()
             setLoading(false)
-        }, 5000)
+        }, 10000)
     }
 
     return (
