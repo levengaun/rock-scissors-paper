@@ -24,12 +24,13 @@ export default function RockScissorsPaper() {
         web3.setProvider(ethereum)
 
         let accounts = await web3.eth.getAccounts()
-        setAccount(accounts[0])
+        let account = web3.utils.toChecksumAddress(accounts[0])
+        setAccount(account)
 
-        let balance = await web3.eth.getBalance(accounts[0])
+        let balance = await web3.eth.getBalance(account)
         setBalance(balance/1e18)
         
-        const contract = new web3.eth.Contract(abi, contractAddress)
+        const contract = new web3.eth.Contract(abi, web3.utils.toChecksumAddress(contractAddress))
         setContract(contract)
 
         const blockNumber = await web3.eth.getBlockNumber()
