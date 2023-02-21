@@ -1,6 +1,5 @@
-import Web3 from "web3"
 
-// export const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/")
+
 export const abi = JSON.parse(`[
 	{
 		"inputs": [],
@@ -66,7 +65,7 @@ export const abi = JSON.parse(`[
 	}
 ]`)
 
-export const contractAddress =  "0x949A362a1C4c7Ea117991A520Ca8422a23cc63E1"
+export const contractAddress =  "0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4"
 
 export const moves = ["None", "Rock", "Scissors", "Paper"]
 export const statuses = ["Draw", "Lose", "Win"]

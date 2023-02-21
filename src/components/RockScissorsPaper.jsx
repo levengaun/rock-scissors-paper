@@ -1,19 +1,21 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import Web3 from "web3"
-import { abi, contractAddress, moves, statuses} from "../constants"
+import { abi, contractAddress, moves, statuses } from "../constants"
+
 
 export default function RockScissorsPaper() {
     const [account, setAccount] = useState("")
     const [balance, setBalance] = useState(0)
     const [contract, setContract] = useState(null)
-    const [contractBalance, setContractBalance] = useState(0)
     const [value, setValue] = useState(0.001)
     const [latestGames, setLatestGames] = useState([])
-    const [web3, setWeb3] = useState(new Web3())
+    const [web3, _] = useState(new Web3())
+    const [loading, setLoading] = useState(true)
 
     const ethereum = window.ethereum
 
     const connectWallet = async () => {
+        setLoading(true)
         if (!ethereum) {
             console.log("Install MetaMask")
             return
@@ -35,6 +37,7 @@ export default function RockScissorsPaper() {
             fromBlock: blockNumber-5000, toBlock: blockNumber
         })
         setLatestGames(games.reverse().slice(0, 10))
+        setLoading(false)
     }
 
     const fetchGames = async () => {
@@ -54,6 +57,10 @@ export default function RockScissorsPaper() {
     }
 
     const handlePlay = async (option) => {
+        if (!account) {
+            connectWallet()
+        }
+        
         const tx = contract.methods.play(option)
         const signature = await ethereum.request({
             method: "eth_sendTransaction",
@@ -72,6 +79,26 @@ export default function RockScissorsPaper() {
     }
 
     return (
+        <>
+        <header>
+            <section className="p-1 bg-yellow-500 text-center">
+                    <h2 className="font-bold">dApp working on Binance Smart Chain - Testnet</h2>
+            </section>
+            <nav className="p-3 px-5 flex justify-between items-center">
+                <h2>Rock Scissors Paper</h2>
+                <div className="p-2 px-3 bg-yellow-500 rounded-lg text-white font-bold">
+                    {account 
+                    ? <h2>{account.slice(0, 10)+"..."}</h2>
+                    : <button 
+                        onClick={connectWallet}
+                        >Connect Wallet</button>
+                    } 
+                </div>
+
+            </nav>
+            <hr />
+        </header>
+
         <section>
            <div className="m-10 flex flex-col items-center">
                 <h2 className="m-5 text-2xl font-bold">Rock Scissors Paper dApp</h2>
@@ -104,7 +131,7 @@ export default function RockScissorsPaper() {
                         <h2 className="">Status</h2>
                     </div>
 
-                    {latestGames.length == 0 
+                    {loading 
                     ? <h2 className="text-center text-xl font-bold">Loading...</h2> 
                     : latestGames.map(game => {
                         const values = game.returnValues
@@ -122,6 +149,8 @@ export default function RockScissorsPaper() {
 
            </div>
         </section>
+        </>
+
             
     )
 }

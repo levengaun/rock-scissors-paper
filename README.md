@@ -1,7 +1,7 @@
 # rock-scissors-paper
 Rock Scissors Paper dApp
 
-[Contract: 0x949A362a1C4c7Ea117991A520Ca8422a23cc63E1](https://testnet.bscscan.com/address/0x949A362a1C4c7Ea117991A520Ca8422a23cc63E1)
+[Contract: 0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4](https://testnet.bscscan.com/address/0x180B76bfc8A6DDf12fc6B5b1976a3e354AEfC8d4)
 
 ## Screenshots
 Simple UI for interacting with smart contract.
